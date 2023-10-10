@@ -6,8 +6,7 @@ from django.urls import reverse
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset()\
-                      .filter(status=Post.Status.PUBLISHED)
+        return super().get_queryset().filter(status=Post.Status.PUBLISHED)
 
 
 class Post(models.Model):
@@ -18,7 +17,7 @@ class Post(models.Model):
 
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250,
-                            unique_for_date='publish')
+                            unique_for_date='publish', blank=True)
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                related_name='blog_posts')
@@ -55,7 +54,7 @@ class Comment(models.Model):
                              on_delete=models.CASCADE,
                              related_name='comments')
     name = models.CharField(max_length=80)
-    email = models.EmailField()
+    email = models.EmailField(blank=True)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -69,3 +68,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.name} on {self.post}'
+
+
+class FileModel(models.Model):
+    uuid = models.UUIDField(primary_key=True, editable=False)
+    file = models.FileField(blank=False)
